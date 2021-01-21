@@ -1,0 +1,27 @@
+version: "3.3"
+services:
+  backend:
+    build: .
+    links: 
+      - postgres
+    depends_on:
+      - postgres
+    environment:
+      PORT: 8000
+      DB_URL: postgres://user:pass@postgres:5432/db
+    ports:
+      - "8000:8000"
+    # Wait for Postgres Start the easy way
+    command: /bin/sh -c 'sleep 5; yarn dev'
+    volumes: 
+      - .:/app/
+      
+
+  postgres:
+    image: postgres:12
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: db

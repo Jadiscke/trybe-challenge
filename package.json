@@ -1,0 +1,24 @@
+{
+  "name": "trybe-challenge",
+  "version": "1.0.0",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "nodemon -L",
+    "migration:generate": "yarn sequelize-cli migration:generate",
+    "migrate": "yarn sequelize-cli db:migrate"
+  },
+  "repository": "https://github.com/Jadiscke/trybe-challenge.git",
+  "author": "Jadiscke <vjtasso@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "nodemon": "^2.0.7",
+    "sequelize-cli": "^6.2.0"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "pg": "^8.5.1",
+    "pg-hstore": "^2.3.3",
+    "sequelize": "^6.4.0",
+    "uuidv4": "^6.2.6"
+  }
+}
