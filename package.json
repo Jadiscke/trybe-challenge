@@ -5,13 +5,17 @@
   "scripts": {
     "dev": "nodemon -L",
     "migration:generate": "yarn sequelize-cli migration:generate",
-    "migrate": "yarn sequelize-cli db:migrate"
+    "migrate": "yarn sequelize-cli db:migrate",
+    "test": "mocha \"./tests/**/*.test.js\" --config \".mocharc.json\"",
+    "coverage": "nyc yarn test"
   },
   "repository": "https://github.com/Jadiscke/trybe-challenge.git",
   "author": "Jadiscke <vjtasso@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "mocha": "^8.2.1",
     "nodemon": "^2.0.7",
+    "nyc": "^15.1.0",
     "sequelize-cli": "^6.2.0"
   },
   "dependencies": {
