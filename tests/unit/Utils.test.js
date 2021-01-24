@@ -1,4 +1,4 @@
-const assert = require("assert");
+const { assert } = require("chai");
 const Utils = require("../../src/Utils");
 
 const VALID_USER = {
@@ -69,5 +69,21 @@ describe("Utils", () => {
     const expected = [validUserWithoutPassword];
     const formatedUserList = Utils.formatUserList(listOfUsers);
     assert.deepStrictEqual(formatedUserList, expected);
+  });
+
+  it("should return true if displayName length is greater than 8", () => {
+    const displayName = "Test Dispay Name";
+    const expected = true;
+
+    const isValidDisplayName = Utils.validateDisplayName(displayName);
+    assert.deepStrictEqual(isValidDisplayName, expected);
+  });
+  it("should validate password lenght", () => {
+    const password = "123456";
+    const expected = true;
+
+    const isValidPassword = Utils.validatePasswordLenght(password);
+
+    assert.deepStrictEqual(isValidPassword, expected);
   });
 });
