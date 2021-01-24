@@ -40,9 +40,12 @@ class Utils {
   formatUserList(users) {
     const formatedUsers = users.map((user) => {
       const safeUser = {
-        ...user.dataValues,
+        id: user.id,
+        user: user.user,
+        email: user.email,
+        displayName: user.displayName,
+        image: user.image,
       };
-      safeUser.password = undefined;
       return safeUser;
     });
 

@@ -1,5 +1,15 @@
 const assert = require("assert");
 const Utils = require("../../src/Utils");
+
+const VALID_USER = {
+  id: "validID",
+  user: "user",
+  password: "pass",
+  email: "email@example.com",
+  displayName: "DisplayName",
+  image: "www.google.com",
+};
+
 describe("Utils", () => {
   it("should return true when e-mail is valid email", () => {
     const validEmail = "example@example.com";
@@ -45,5 +55,19 @@ describe("Utils", () => {
     const isDefined = Utils.validateIfUserEntriesAreDefined(invalidUser);
 
     assert.deepStrictEqual(isDefined, expected);
+  });
+  it("should format the users list", () => {
+    const listOfUsers = [VALID_USER];
+    const validUserWithoutPassword = {
+      id: VALID_USER.id,
+      user: VALID_USER.user,
+      email: VALID_USER.email,
+      displayName: VALID_USER.displayName,
+      image: VALID_USER.image,
+    };
+
+    const expected = [validUserWithoutPassword];
+    const formatedUserList = Utils.formatUserList(listOfUsers);
+    assert.deepStrictEqual(formatedUserList, expected);
   });
 });
