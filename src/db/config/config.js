@@ -5,4 +5,7 @@ module.exports = {
   username: "user",
   password: "pass",
   database: "db",
+  storage: "../tests/database.sqlite",
 };
+
+console.log(process.env.DB_DIALECT);

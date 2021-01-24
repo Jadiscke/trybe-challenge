@@ -9,6 +9,7 @@ services:
     environment:
       PORT: 8000
       DB_URL: postgres://user:pass@postgres:5432/db
+      AUTHENTICATION_SECRET: 6ca58963cf7557e1c7f54b80e9dceda9ba4ddb21be4398e467e8debb9020e5fe8ce8ed652591ba2bdc3470c1fefe538bcaff52c04aef7557d80842f2532bdee0
     ports:
       - "8000:8000"
     # Wait for Postgres Start the easy way

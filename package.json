@@ -6,23 +6,31 @@
     "dev": "nodemon -L",
     "migration:generate": "yarn sequelize-cli migration:generate",
     "migrate": "yarn sequelize-cli db:migrate",
-    "test": "mocha \"./tests/**/*.test.js\" --config \".mocharc.json\"",
+    "pretest": "cross-env NODE_ENV=test yarn migrate",
+    "test": "cross-env NODE_ENV=test mocha \"./tests/**/*.test.js\" --config \".mocharc.json\" --exit",
+    "posttest": "cross-env NODE_ENV=test sequelize-cli db:migrate:undo:all",
     "coverage": "nyc yarn test"
   },
   "repository": "https://github.com/Jadiscke/trybe-challenge.git",
   "author": "Jadiscke <vjtasso@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "cross-env": "^7.0.3",
     "mocha": "^8.2.1",
     "nodemon": "^2.0.7",
     "nyc": "^15.1.0",
     "sequelize-cli": "^6.2.0"
   },
   "dependencies": {
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
     "pg": "^8.5.1",
     "pg-hstore": "^2.3.3",
     "sequelize": "^6.4.0",
+    "sqlite3": "^5.0.1",
     "uuidv4": "^6.2.6"
   }
 }
