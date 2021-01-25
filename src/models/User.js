@@ -1,6 +1,6 @@
 const Sequelize = require("sequelize");
 const { Model } = require("sequelize");
-const { uuid } = require("uuidv4");
+const { v4 } = require("uuid");
 
 class User extends Model {
   static init(connection) {
@@ -14,9 +14,11 @@ class User extends Model {
       },
       { sequelize: connection, timestamps: false, modelName: "user" }
     );
-    this.addHook("beforeSave", async (user) => {
-      return (user.id = uuid());
+    this.addHook("beforeSave", (user) => {
+      user.id = v4();
+      return user.id;
     });
+
     return this;
   }
 }

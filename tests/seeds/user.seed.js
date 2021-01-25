@@ -1,13 +1,13 @@
 const User = require("../../src/models/User");
-
-async function seedUser(models) {
-  const seededUser = {
-    user: "testuser",
-    password: "pass",
-    email: "test@email.com",
-    displayName: "atleast8name",
-    image: "anyURL",
-  };
+const SEEDED_USER = {
+  user: "testuser",
+  password: "123456",
+  email: "test@email.com",
+  displayName: "atleast8name",
+  image: "anyURL",
+};
+async function seedUser() {
+  const seededUser = SEEDED_USER;
   const { id } = await User.create(seededUser);
   return {
     id,
@@ -15,4 +15,4 @@ async function seedUser(models) {
   };
 }
 
-module.exports = seedUser;
+module.exports = { seedUser, SEEDED_USER };

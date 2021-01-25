@@ -1,7 +1,41 @@
 const UserModel = require("../models/User");
+const { generateToken } = require("../Authentication");
 const Utils = require("../Utils");
+
 class UserController {
   constructor() {}
+  async findUserWithEmail(email) {
+    const user = await UserModel.findOne({ where: { email: email } });
+
+    return user;
+  }
+
+  async login(req, res) {
+    try {
+      const { user, password } = req.body;
+
+      const userFound = await UserModel.findOne({
+        where: {
+          user: user,
+          password: password,
+        },
+      });
+
+      if (!userFound) {
+        res.status(400).json({
+          message: "Campos inválidos",
+        });
+      }
+
+      const token = generateToken(userFound.id);
+
+      return res.status(200).json({
+        token,
+      });
+    } catch (error) {
+      return res.status(401).send();
+    }
+  }
 
   async getUsers(req, res) {
     try {
@@ -13,14 +47,8 @@ class UserController {
     }
   }
 
-  async #findUserWithEmail(email)  {
-    const user = await UserModel.findOne({  email: email  });
-    return user;
-  }
-
   async create(req, res) {
-    const { user, password, email, image, displayName } = req.body;
-
+    console.log("Req BODY: ", req.body);
     try {
       const {
         valid: isDefined,
@@ -31,42 +59,43 @@ class UserController {
           .status(400)
           .json({ message: `"${undefinedKeys[0]}" is required` });
       }
+      const { user, password, email, image, displayName } = req.body;
       if (!Utils.validateDisplayName(displayName)) {
         return res.status(400).json({
           message: ' "displayName" lenght must be at least 8 characters long',
         });
       }
-      if (!Utils.validateEmail) {
+      if (!Utils.validateEmail(email)) {
         return res.status(400).json({
           message: ' "email" must be a valid e-mail',
         });
       }
 
       const isPasswordValid = Utils.validatePasswordLenght(password);
-      
-      if(!isPasswordValid){
+
+      if (!isPasswordValid) {
         return res.status(400).json({
-          message: ' "password" length must be 6 characters long '
-        })
+          message: ' "password" length must be 6 characters long ',
+        });
       }
 
-      const userFoundByEmail = this.#findUserWithEmail(email);
-      if (userFoundByEmail){
+      const foundUser = await UserController.prototype.findUserWithEmail(email);
+      if (foundUser) {
         return res.status(409).json({
-          message: 'Usuário já existe'
-        })
+          message: "Usuário já existe",
+        });
       }
-
-      
-      const id = await UserModel.create({
+      console.log("CRIADO FDP");
+      const { id } = await UserModel.create({
         user,
         password,
         email,
         image,
         displayName,
       });
-      console.log("After Create User");
-      return res.json({ id });
+      const token = generateToken(id);
+      console.log("Token", token);
+      return res.status(200).json({ token: token });
     } catch (error) {
       console.log(error);
       return res.status(400).json({ message: error });
