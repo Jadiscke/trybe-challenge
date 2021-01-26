@@ -23,21 +23,21 @@ describe(" User ", async () => {
     clock.restore();
   });
 
-  describe("GET /users", async () => {
-    it("should get a list of users", async () => {
+  describe("GET /user", async () => {
+    it("should get a list of user", async () => {
       const foundUser = await User.findOne({
         where: { email: SEEDED_USER.email },
       });
       const token = generateToken(foundUser.id);
       const response = await request(app)
-        .get("/users")
+        .get("/user")
         .type("form")
         .set("Authorization", `Bearer ${token}`);
       assert.deepStrictEqual(response.status, 200);
     });
 
-    it("should fail to get a list of users when token is missing", async () => {
-      const response = await request(app).get("/users").type("form");
+    it("should fail to get a list of user when token is missing", async () => {
+      const response = await request(app).get("/user").type("form");
       assert.deepStrictEqual(response.status, 401);
     });
     it("should fail to get a list of users when token is invalid", async () => {
@@ -45,7 +45,7 @@ describe(" User ", async () => {
         message: "Token não encontrado",
       };
       const response = await request(app)
-        .get("/users")
+        .get("/user")
         .type("form")
         .set("Authorization", "Bearer 123456");
       assert.deepStrictEqual(response.status, 401);
@@ -61,14 +61,14 @@ describe(" User ", async () => {
       const token = generateToken(foundUser.id);
       clock.tick(BIG_TIME);
       const response = await request(app)
-        .get("/users")
+        .get("/user")
         .type("form")
         .set("Authorization", `Bearer ${token}`);
       assert.deepStrictEqual(response.status, 401);
       assert.deepStrictEqual(response.body, expected);
     });
   });
-  describe("POST /users", async () => {
+  describe("POST /user", async () => {
     it("should create a new user and return a token", async () => {
       const newUser = {
         password: "123456",
@@ -77,7 +77,7 @@ describe(" User ", async () => {
         image: "No image for now",
       };
 
-      const response = await request(app).post("/users").send(newUser);
+      const response = await request(app).post("/user").send(newUser);
       assert.deepStrictEqual(response.status, 200);
       console.log(response.body);
       assert.property(response.body, "token");
@@ -94,7 +94,7 @@ describe(" User ", async () => {
       };
 
       const response = await request(app)
-        .post("/users")
+        .post("/user")
         .send({ ...userWithMissingUserName });
       console.log("2 - Response: ", response.body);
       assert.deepStrictEqual(response.body, expected);
@@ -104,7 +104,7 @@ describe(" User ", async () => {
         message: "Usuário já existe",
       };
 
-      const response = await request(app).post("/users").send(SEEDED_USER);
+      const response = await request(app).post("/user").send(SEEDED_USER);
 
       assert.deepStrictEqual(response.body, expected);
     });
