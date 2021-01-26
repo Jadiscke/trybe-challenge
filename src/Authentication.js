@@ -8,7 +8,15 @@ class Authentication {
   }
 
   decipherToken(token) {
-    return jwt.verify(token, process.env.AUTHENTICATION_SECRET);
+    try {
+      const decipheredInfo = jwt.verify(
+        token,
+        process.env.AUTHENTICATION_SECRET
+      );
+      return decipheredInfo;
+    } catch (error) {
+      return undefined;
+    }
   }
 }
 

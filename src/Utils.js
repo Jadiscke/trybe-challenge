@@ -60,8 +60,6 @@ class Utils {
     for (const key in loginInformation) {
       if (Object.hasOwnProperty.call(loginInformation, key)) {
         const element = loginInformation[key];
-        console.log("Key: ", key);
-        console.log("Element: ", element);
         if (element === undefined)
           return { valid: false, message: `"${key}" is required` };
         if (!element.length)

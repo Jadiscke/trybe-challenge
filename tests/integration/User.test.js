@@ -6,16 +6,56 @@ const request = require("supertest");
 const db = require("../../src/db");
 const { seedUser, SEEDED_USER } = require("../seeds/user.seed");
 const app = require("./../../src/app");
+const User = require("../../src/models/User");
+const { generateToken } = require("../../src/Authentication");
 
 describe(" User ", async () => {
-  beforeEach(async () => {
+  before(async () => {
     await seedUser();
   });
 
   describe("GET /users", async () => {
     it("should get a list of users", async () => {
-      const response = await request(app).get("/users").type("form");
+      const foundUser = await User.findOne({
+        where: { email: SEEDED_USER.email },
+      });
+      const token = generateToken(foundUser.id);
+      const response = await request(app)
+        .get("/users")
+        .type("form")
+        .set("Authorization", `Bearer ${token}`);
       assert.deepStrictEqual(response.status, 200);
+    });
+
+    it("should fail to get a list of users when token is missing", async () => {
+      const response = await request(app).get("/users").type("form");
+      assert.deepStrictEqual(response.status, 401);
+    });
+    it("should fail to get a list of users when token is invalid", async () => {
+      const expected = {
+        message: "Token não encontrado",
+      };
+      const response = await request(app)
+        .get("/users")
+        .type("form")
+        .set("Authorization", "Bearer 123456");
+      assert.deepStrictEqual(response.status, 401);
+      assert.deepStrictEqual(response.body, expected);
+    });
+    it("should fail to get a list of users when token is expired", async () => {
+      const expected = {
+        message: "Token expirado ou inválido",
+      };
+      const foundUser = await User.findOne({
+        where: { email: SEEDED_USER.email },
+      });
+      const token = generateToken(foundUser.id);
+      const response = await request(app)
+        .get("/users")
+        .type("form")
+        .set("Authorization", `Bearer ${token}`);
+      assert.deepStrictEqual(response.status, 401);
+      assert.deepStrictEqual(response.body, expected);
     });
   });
   describe("POST /users", async () => {
