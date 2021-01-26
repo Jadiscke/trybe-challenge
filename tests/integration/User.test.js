@@ -21,7 +21,6 @@ describe(" User ", async () => {
   describe("POST /users", async () => {
     it("should create a new user and return a token", async () => {
       const newUser = {
-        user: "newTestUser",
         password: "123456",
         email: "newemail@example.com",
         displayName: "I am a New Test",
@@ -37,12 +36,11 @@ describe(" User ", async () => {
     it("should fail when trying to create a new user with missing information", async () => {
       const userWithMissingUserName = {
         password: "123456",
-        email: "new@email.com",
         displayName: "I am a New Test",
         image: "No image for now",
       };
       const expected = {
-        message: '"user" is required',
+        message: '"email" is required',
       };
 
       const response = await request(app)
@@ -65,7 +63,7 @@ describe(" User ", async () => {
     it("should return a token when trying to Login", async () => {
       const seededUser = SEEDED_USER;
       const loginInformation = {
-        user: seededUser.user,
+        email: seededUser.email,
         password: seededUser.password,
       };
       const response = await request(app).post("/login").send(loginInformation);

@@ -12,11 +12,11 @@ class UserController {
 
   async login(req, res) {
     try {
-      const { user, password } = req.body;
+      const { email, password } = req.body;
 
       const userFound = await UserModel.findOne({
         where: {
-          user: user,
+          email: email,
           password: password,
         },
       });
@@ -48,7 +48,6 @@ class UserController {
   }
 
   async create(req, res) {
-    console.log("Req BODY: ", req.body);
     try {
       const {
         valid: isDefined,
@@ -59,7 +58,7 @@ class UserController {
           .status(400)
           .json({ message: `"${undefinedKeys[0]}" is required` });
       }
-      const { user, password, email, image, displayName } = req.body;
+      const { password, email, image, displayName } = req.body;
       if (!Utils.validateDisplayName(displayName)) {
         return res.status(400).json({
           message: ' "displayName" lenght must be at least 8 characters long',
@@ -85,9 +84,7 @@ class UserController {
           message: "Usuário já existe",
         });
       }
-      console.log("CRIADO FDP");
       const { id } = await UserModel.create({
-        user,
         password,
         email,
         image,

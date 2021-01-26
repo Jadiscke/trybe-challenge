@@ -10,7 +10,6 @@ class Utils {
   }
   validateIfUserEntriesAreDefined(user) {
     const copyUser = {
-      user: undefined,
       password: undefined,
       email: undefined,
       displayName: undefined,

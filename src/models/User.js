@@ -6,7 +6,6 @@ class User extends Model {
   static init(connection) {
     super.init(
       {
-        user: Sequelize.STRING,
         password: Sequelize.STRING,
         email: Sequelize.STRING,
         displayName: Sequelize.STRING,

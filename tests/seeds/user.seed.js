@@ -1,6 +1,5 @@
 const User = require("../../src/models/User");
 const SEEDED_USER = {
-  user: "testuser",
   password: "123456",
   email: "test@email.com",
   displayName: "atleast8name",
