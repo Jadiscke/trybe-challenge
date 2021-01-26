@@ -9,9 +9,18 @@ const app = require("./../../src/app");
 const User = require("../../src/models/User");
 const { generateToken } = require("../../src/Authentication");
 
+const sinon = require("sinon");
+const BIG_TIME = 180000000;
+var clock;
+
 describe(" User ", async () => {
   before(async () => {
+    clock = sinon.useFakeTimers();
     await seedUser();
+  });
+
+  after(() => {
+    clock.restore();
   });
 
   describe("GET /users", async () => {
@@ -50,6 +59,7 @@ describe(" User ", async () => {
         where: { email: SEEDED_USER.email },
       });
       const token = generateToken(foundUser.id);
+      clock.tick(BIG_TIME);
       const response = await request(app)
         .get("/users")
         .type("form")

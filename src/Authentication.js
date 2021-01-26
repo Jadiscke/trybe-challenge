@@ -15,6 +15,7 @@ class Authentication {
       );
       return decipheredInfo;
     } catch (error) {
+      if (error?.name === "TokenExpiredError") throw error;
       return undefined;
     }
   }
