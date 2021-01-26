@@ -68,6 +68,58 @@ describe(" User ", async () => {
       assert.deepStrictEqual(response.body, expected);
     });
   });
+  describe("GET /user/:id", async () => {
+    it("should return a user by id", async () => {
+      const { id } = await User.findOne({
+        where: { email: SEEDED_USER.email },
+      });
+      const token = generateToken(id);
+      const expected = {
+        id,
+        displayName: SEEDED_USER.displayName,
+        email: SEEDED_USER.email,
+        image: SEEDED_USER.image,
+      };
+      const response = await request(app)
+        .get(`/user/${id}`)
+        .set("Authorization", `Bearer ${token}`);
+
+      assert.deepStrictEqual(response.body, expected);
+    });
+    it("should return a user status 404 if user is not found", async () => {
+      const { id } = await User.findOne({
+        where: { email: SEEDED_USER.email },
+      });
+      const invalidId = Math.floor(Math.random() * 100);
+      const token = generateToken(id);
+      const expected = {
+        id,
+        displayName: SEEDED_USER.displayName,
+        email: SEEDED_USER.email,
+        image: SEEDED_USER.image,
+      };
+      const response = await request(app)
+        .get(`/user/${invalidId}`)
+        .set("Authorization", `Bearer ${token}`);
+
+      assert.deepStrictEqual(response.status, 404);
+    });
+
+    it("should return status 401 if token is not valid", async () => {
+      const { id } = await User.findOne({
+        where: { email: SEEDED_USER.email },
+      });
+      const token = undefined;
+      const expected = {
+        message: "Token não encontrado",
+      };
+      const response = await request(app)
+        .get(`/user/${id}`)
+        .set("Authorization", `Bearer ${token}`);
+      assert.deepStrictEqual(response.status, 401);
+      assert.deepStrictEqual(response.body, expected);
+    });
+  });
   describe("POST /user", async () => {
     it("should create a new user and return a token", async () => {
       const newUser = {

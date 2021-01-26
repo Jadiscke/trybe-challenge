@@ -37,18 +37,20 @@ class Utils {
   }
 
   formatUserList(users) {
-    const formatedUsers = users.map((user) => {
-      const safeUser = {
-        id: user.id,
-        user: user.user,
-        email: user.email,
-        displayName: user.displayName,
-        image: user.image,
-      };
-      return safeUser;
-    });
+    const formatedUsers = users.map(this.formatUser);
 
     return formatedUsers;
+  }
+
+  formatUser(user) {
+    const safeUser = {
+      id: user.id,
+      user: user.user,
+      email: user.email,
+      displayName: user.displayName,
+      image: user.image,
+    };
+    return safeUser;
   }
 
   validateLoginInformation(loginInformation) {

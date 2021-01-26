@@ -53,6 +53,19 @@ class UserController {
       return res.status(400).json(error);
     }
   }
+  async getUserById(req, res) {
+    const { id } = req.params;
+    try {
+      const user = await UserModel.findOne({ where: { id: id } });
+      if (!user) {
+        return res.status(404).json({ message: "Usuário não existe" });
+      }
+      const formatedUser = Utils.formatUser(user);
+      return res.status(200).json(formatedUser);
+    } catch (error) {
+      return res.status(400).json(error);
+    }
+  }
 
   async create(req, res) {
     try {

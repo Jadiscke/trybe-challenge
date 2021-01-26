@@ -10,6 +10,11 @@ userRoutes.get(
   authenticationMiddleware.authenticateToken,
   userController.getUsers
 );
+userRoutes.get(
+  PATH + "/:id",
+  authenticationMiddleware.authenticateToken,
+  userController.getUserById
+);
 userRoutes.post(PATH, userController.create);
 
 module.exports = userRoutes;

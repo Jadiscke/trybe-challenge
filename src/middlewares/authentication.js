@@ -7,12 +7,12 @@ class AuthenticationMiddleware {
       const authHeader = req.headers["authorization"];
 
       if (!authHeader) {
-        return res.status(401).send();
+        return res.status(401).json({ message: "Token não encontrado" });
       }
       const token = authHeader && authHeader.split(" ")[1];
 
       if (token === null) {
-        return res.status(401).send();
+        return res.status(401).json({ message: "Token não encontrado" });
       }
       const decipheredInfo = decipherToken(token);
       if (!decipheredInfo)
@@ -21,7 +21,7 @@ class AuthenticationMiddleware {
       const { id } = decipheredInfo;
       const foundUser = await UserModel.findOne({ where: { id } });
       if (!foundUser) {
-        return res.status(401).send();
+        return res.status(401).json({ message: "Token não encontrado" });
       }
 
       next();
