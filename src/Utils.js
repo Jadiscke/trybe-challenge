@@ -50,6 +50,29 @@ class Utils {
 
     return formatedUsers;
   }
+
+  validateLoginInformation(loginInformation) {
+    loginInformation = {
+      email: undefined,
+      password: undefined,
+      ...loginInformation,
+    };
+    for (const key in loginInformation) {
+      if (Object.hasOwnProperty.call(loginInformation, key)) {
+        const element = loginInformation[key];
+        console.log("Key: ", key);
+        console.log("Element: ", element);
+        if (element === undefined)
+          return { valid: false, message: `"${key}" is required` };
+        if (!element.length)
+          return {
+            valid: false,
+            message: `"${key}" is not allowed to be empty`,
+          };
+      }
+    }
+    return { valid: true };
+  }
 }
 
 module.exports = new Utils();

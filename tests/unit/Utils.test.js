@@ -45,12 +45,11 @@ describe("Utils", () => {
   it("should return false if user entries are not defined", () => {
     const invalidUser = {
       password: "pass",
-      email: "email@example.com",
       displayName: "DisplayName",
     };
     const expected = {
       valid: false,
-      undefinedKeys: ["user"],
+      undefinedKeys: ["email"],
     };
     const isDefined = Utils.validateIfUserEntriesAreDefined(invalidUser);
 
@@ -85,5 +84,78 @@ describe("Utils", () => {
     const isValidPassword = Utils.validatePasswordLenght(password);
 
     assert.deepStrictEqual(isValidPassword, expected);
+  });
+  it("should validate login information and return true when login information is valid", () => {
+    const expected = true;
+
+    const loginInformation = {
+      email: "valid@email.com",
+      password: "123456",
+    };
+    const { valid } = Utils.validateLoginInformation(loginInformation);
+
+    assert.deepStrictEqual(valid, expected);
+  });
+  it("should return false when missing email or password in login information", () => {
+    const expected = false;
+
+    const loginInformationWithoutEmail = {
+      password: "123456",
+    };
+
+    const loginInformationWithoutPassword = {
+      email: "valid@email.com",
+    };
+
+    const {
+      valid: invalidWithoutEmail,
+      message: invalidWithoutEmailMessage,
+    } = Utils.validateLoginInformation(loginInformationWithoutEmail);
+    const {
+      valid: invalidWithoutPassword,
+      message: invalidWithoutPasswordMessage,
+    } = Utils.validateLoginInformation(loginInformationWithoutPassword);
+
+    assert.deepStrictEqual(invalidWithoutEmail, expected);
+    assert.deepStrictEqual(invalidWithoutEmailMessage, `"email" is required`);
+    assert.deepStrictEqual(invalidWithoutPassword, expected);
+    assert.deepStrictEqual(
+      invalidWithoutPasswordMessage,
+      `"password" is required`
+    );
+  });
+
+  it("should return false when email or password are empty in login information", () => {
+    const expected = false;
+
+    const loginInformationWithEmptyEmail = {
+      email: "",
+      password: "123456",
+    };
+
+    const loginInformationWithEmptyPassword = {
+      password: "",
+      email: "valid@email.com",
+    };
+
+    const {
+      valid: invalidWithEmptyEmail,
+      message: invalidWithEmptyEmailMessage,
+    } = Utils.validateLoginInformation(loginInformationWithEmptyEmail);
+    const {
+      valid: invalidWithEmptyPassword,
+      message: invalidWithEmptyPasswordMessage,
+    } = Utils.validateLoginInformation(loginInformationWithEmptyPassword);
+
+    assert.deepStrictEqual(invalidWithEmptyEmail, expected);
+    assert.deepStrictEqual(
+      invalidWithEmptyEmailMessage,
+      `"email" is not allowed to be empty`
+    );
+    assert.deepStrictEqual(invalidWithEmptyPassword, expected);
+    assert.deepStrictEqual(
+      invalidWithEmptyPasswordMessage,
+      `"password" is not allowed to be empty`
+    );
   });
 });

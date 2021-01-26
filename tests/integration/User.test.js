@@ -69,5 +69,34 @@ describe(" User ", async () => {
       const response = await request(app).post("/login").send(loginInformation);
       assert.property(response.body, "token");
     });
+
+    it("should fail whent trying to login with missing information", async () => {
+      const expected = {
+        message: '"email" is required',
+      };
+      const seededUser = SEEDED_USER;
+      const loginInformation = {
+        password: seededUser.password,
+      };
+
+      const response = await request(app).post("/login").send(loginInformation);
+      assert.deepStrictEqual(response.status, 400);
+      assert.deepStrictEqual(response.body, expected);
+    });
+
+    it("should fail whent trying to login with wrong information", async () => {
+      const expected = {
+        message: "Campos inválidos!",
+      };
+      const seededUser = SEEDED_USER;
+      const loginInformation = {
+        email: seededUser.email,
+        password: "674512",
+      };
+
+      const response = await request(app).post("/login").send(loginInformation);
+      assert.deepStrictEqual(response.status, 400);
+      assert.deepStrictEqual(response.body, expected);
+    });
   });
 });

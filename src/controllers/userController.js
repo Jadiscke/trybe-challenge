@@ -13,17 +13,24 @@ class UserController {
   async login(req, res) {
     try {
       const { email, password } = req.body;
+      const { valid, message } = Utils.validateLoginInformation({
+        email,
+        password,
+      });
+
+      if (!valid) {
+        return res.status(400).send({ message });
+      }
 
       const userFound = await UserModel.findOne({
         where: {
           email: email,
-          password: password,
         },
       });
 
-      if (!userFound) {
+      if (!userFound || userFound.password !== password) {
         res.status(400).json({
-          message: "Campos inválidos",
+          message: "Campos inválidos!",
         });
       }
 
