@@ -1,6 +1,5 @@
 process.env.NODE_ENV = "test";
 const env = require("../../src/env");
-const chai = require("chai");
 const { assert } = require("chai");
 const request = require("supertest");
 const db = require("../../src/db");
