@@ -96,7 +96,7 @@ class UserController {
       if (!user) {
         return res.status(404).json({ message: "Usuário não existe" });
       }
-      const formatedUser = Utils.formatUser(user);
+      const formatedUser = Utils.formatUser(user.dataValues);
       return res.status(200).json(formatedUser);
     } catch (error) {
       return res.status(400).json(error);
