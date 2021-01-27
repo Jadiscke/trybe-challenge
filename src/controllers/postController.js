@@ -3,7 +3,7 @@ const UserModel = require("../models/User");
 const Utils = require("../Utils");
 
 class PostController {
-  async getPosts(req, res) {
+  async getAll(req, res) {
     try {
       const foundPosts = await PostModel.findAll({ include: UserModel });
       const foundPostsValues = foundPosts.map((post) => {
@@ -18,7 +18,7 @@ class PostController {
     }
   }
 
-  async getPostById(req, res) {
+  async getById(req, res) {
     const { id } = req.params;
 
     console.log("POST ID:  ", id);
@@ -82,7 +82,7 @@ class PostController {
     }
   }
 
-  async updatePostById(req, res) {
+  async updateById(req, res) {
     const { id } = req.params;
     const { id: userId } = req.user;
     const { title, content } = req.body;
@@ -117,6 +117,31 @@ class PostController {
         content,
         userId,
       });
+    } catch (error) {
+      return res.status(400).json(error);
+    }
+  }
+
+  async deleteById(req, res) {
+    const { id } = req.params;
+    const { id: userId } = req.user;
+    console.log("POST ID: ", id);
+    try {
+      const post = await PostModel.findOne({ where: { id } });
+      if (!post) {
+        console.log("POST NOT FOUND");
+        return res.status(404).json({
+          message: "Post não existe",
+        });
+      }
+      if (post.userId !== userId) {
+        return res.status(401).json({
+          message: "Usuário não autorizado",
+        });
+      }
+
+      await post.destroy();
+      return res.status(204).send();
     } catch (error) {
       return res.status(400).json(error);
     }

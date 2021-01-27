@@ -160,6 +160,99 @@ describe("POST", async () => {
       assert.deepStrictEqual(response.body, expected);
     });
   });
+
+  describe("DELETE /post/:id", async () => {
+    it("should delete a post by id", async () => {
+      const newPost = {
+        title: "new post",
+        content: "this is a new post",
+      };
+      const now = new Date(Date.now()).toISOString();
+      const { id: userId } = await User.findOne({
+        where: { email: SEEDED_USER.email },
+      });
+      const { id: postId } = await Post.create({
+        ...newPost,
+        userId,
+        published: now,
+        updated: now,
+      });
+
+      const token = generateToken(userId);
+
+      const response = await request(app)
+        .delete(`/post/${postId}`)
+        .set("Authorization", `Bearer ${token}`);
+      const foundPost = await Post.findOne({ where: { id: postId } });
+      console.log("BODY: ", response.body);
+      assert.deepStrictEqual(response.status, 204);
+      assert.isNull(foundPost);
+    });
+    it("should refuse to delete because the user is not authorized", async () => {
+      const newPost = {
+        title: "new post",
+        content: "this is a new post",
+      };
+      const now = new Date(Date.now()).toISOString();
+      const user = await User.findOne({
+        where: { email: SEEDED_USER.email },
+      });
+      const anotherUser = await User.create({
+        ...SEEDED_USER,
+        email: "notauthorized@email.com",
+      });
+      const { id: userId } = user;
+      const { id: postId } = await Post.create({
+        ...newPost,
+        userId,
+        published: now,
+        updated: now,
+      });
+
+      const token = generateToken(anotherUser.id);
+      const expected = {
+        message: "Usuário não autorizado",
+      };
+
+      const response = await request(app)
+        .delete(`/post/${postId}`)
+        .set("Authorization", `Bearer ${token}`);
+      const foundPost = await Post.findOne({ where: { id: postId } });
+      assert.deepStrictEqual(response.status, 401);
+      assert.deepStrictEqual(response.body, expected);
+      assert.isNotNull(foundPost);
+    });
+    it("should fail to delete if post does not exist", async () => {
+      const expected = {
+        message: "Post não existe",
+      };
+      const newPost = {
+        title: "new post",
+        content: "this is a new post",
+      };
+      const now = new Date(Date.now()).toISOString();
+      const { id: userId } = await User.findOne({
+        where: { email: SEEDED_USER.email },
+      });
+      const post = await Post.create({
+        ...newPost,
+        userId,
+        published: now,
+        updated: now,
+      });
+      const { id: postId } = post;
+      await post.destroy();
+      const token = generateToken(userId);
+
+      const response = await request(app)
+        .delete(`/post/${postId}`)
+        .set("Authorization", `Bearer ${token}`);
+      const foundPost = await Post.findOne({ where: { id: postId } });
+      console.log("BODY: ", response.body);
+      assert.deepStrictEqual(response.status, 404);
+      assert.deepStrictEqual(response.body, expected);
+    });
+  });
   describe("POST /post", async () => {
     it("should create a new post", async () => {
       const newPost = {

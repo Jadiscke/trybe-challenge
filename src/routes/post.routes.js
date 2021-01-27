@@ -8,19 +8,25 @@ const postRoutes = Router();
 postRoutes.get(
   PATH,
   AuthenticationMiddleware.authenticateToken,
-  postController.getPosts
+  postController.getAll
 );
 
 postRoutes.get(
   PATH + "/:id",
   AuthenticationMiddleware.authenticateToken,
-  postController.getPostById
+  postController.getById
 );
 
 postRoutes.put(
   PATH + "/:id",
   AuthenticationMiddleware.authenticateToken,
-  postController.updatePostById
+  postController.updateById
+);
+
+postRoutes.delete(
+  PATH + "/:id",
+  AuthenticationMiddleware.authenticateToken,
+  postController.deleteById
 );
 
 postRoutes.post(
