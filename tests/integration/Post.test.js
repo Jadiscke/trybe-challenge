@@ -59,8 +59,6 @@ describe("POST", async () => {
         updated: now,
       });
 
-      console.log();
-
       const token = generateToken(userId);
       const expected = {
         id: postId,
@@ -73,7 +71,7 @@ describe("POST", async () => {
       const response = await request(app)
         .get(`/post/${postId}`)
         .set("Authorization", `Bearer ${token}`);
-      console.log(response.body);
+
       assert.deepStrictEqual(response.status, 200);
       assert.deepStrictEqual(response.body, expected);
     });
@@ -158,8 +156,6 @@ describe("POST", async () => {
         content: "this is a updated content",
       };
 
-      console.log();
-
       const token = generateToken(userId);
       const expected = {
         ...updatedPost,
@@ -170,8 +166,6 @@ describe("POST", async () => {
         .put(`/post/${postId}`)
         .set("Authorization", `Bearer ${token}`)
         .send(updatedPost);
-
-      console.log("BODY: ", response.body);
       assert.deepStrictEqual(response.status, 200);
       assert.deepStrictEqual(response.body, expected);
     });
@@ -211,8 +205,6 @@ describe("POST", async () => {
         .put(`/post/${postId}`)
         .set("Authorization", `Bearer ${token}`)
         .send(updatedPost);
-
-      console.log("BODY: ", response.body);
       assert.deepStrictEqual(response.status, 401);
       assert.deepStrictEqual(response.body, expected);
     });
@@ -241,7 +233,6 @@ describe("POST", async () => {
         .delete(`/post/${postId}`)
         .set("Authorization", `Bearer ${token}`);
       const foundPost = await Post.findOne({ where: { id: postId } });
-      console.log("BODY: ", response.body);
       assert.deepStrictEqual(response.status, 204);
       assert.isNull(foundPost);
     });
@@ -305,7 +296,6 @@ describe("POST", async () => {
         .delete(`/post/${postId}`)
         .set("Authorization", `Bearer ${token}`);
       const foundPost = await Post.findOne({ where: { id: postId } });
-      console.log("BODY: ", response.body);
       assert.deepStrictEqual(response.status, 404);
       assert.deepStrictEqual(response.body, expected);
     });

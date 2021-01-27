@@ -12,7 +12,7 @@ async function seedPost(userId) {
       ...SEEDED_POST,
       userId: userId,
     };
-    console.log(seededPost);
+
     const { id } = await Post.create(seededPost);
     return {
       id,

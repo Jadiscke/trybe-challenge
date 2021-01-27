@@ -130,7 +130,7 @@ describe(" User ", async () => {
 
       const response = await request(app).post("/user").send(newUser);
       assert.deepStrictEqual(response.status, 200);
-      console.log(response.body);
+
       assert.property(response.body, "token");
     });
 
@@ -147,7 +147,6 @@ describe(" User ", async () => {
       const response = await request(app)
         .post("/user")
         .send({ ...userWithMissingUserName });
-      console.log("2 - Response: ", response.body);
       assert.deepStrictEqual(response.body, expected);
     });
     it("should fail when trying to create a new user with already registered email", async () => {
@@ -199,7 +198,6 @@ describe(" User ", async () => {
       const response = await request(app)
         .delete("/user/me")
         .set("Authorization", `Bearer ${token}`);
-      console.log(response.body);
 
       assert.deepStrictEqual(response.status, expectedStatus);
       assert.deepStrictEqual(response.body, expected);
@@ -221,7 +219,6 @@ describe(" User ", async () => {
       const response = await request(app)
         .delete("/user/me")
         .set("Authorization", `Bearer ${token}`);
-      console.log(response.body);
 
       const foundUser = await User.findOne({
         where: { id: id },

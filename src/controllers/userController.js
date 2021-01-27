@@ -54,10 +54,8 @@ class UserController {
         displayName,
       });
       const token = generateToken(id);
-      console.log("Token", token);
       return res.status(200).json({ token: token });
     } catch (error) {
-      console.log(error);
       return res.status(400).json({ message: error });
     }
   }

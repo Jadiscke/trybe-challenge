@@ -22,8 +22,6 @@ class PostController {
   async getById(req, res) {
     const { id } = req.params;
 
-    console.log("POST ID:  ", id);
-
     try {
       const foundPost = await PostModel.findOne({
         include: [{ all: true }],
@@ -31,7 +29,6 @@ class PostController {
           id,
         },
       });
-      console.log("FOUND POST:   ", foundPost);
       if (!foundPost) {
         return res.status(404).json({
           message: "Post não existe",
@@ -76,7 +73,6 @@ class PostController {
         userId: id,
       });
     } catch (error) {
-      console.log(error);
       return res.status(400).json({
         error,
       });
@@ -126,11 +122,9 @@ class PostController {
   async deleteById(req, res) {
     const { id } = req.params;
     const { id: userId } = req.user;
-    console.log("POST ID: ", id);
     try {
       const post = await PostModel.findOne({ where: { id } });
       if (!post) {
-        console.log("POST NOT FOUND");
         return res.status(404).json({
           message: "Post não existe",
         });
@@ -175,7 +169,6 @@ class PostController {
 
       return res.status(200).json(formattedPosts);
     } catch (error) {
-      console.log(error);
       return res.status(400).json({ error });
     }
   }
