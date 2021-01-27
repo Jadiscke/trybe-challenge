@@ -86,6 +86,27 @@ class Utils {
     }
     return { valid: true };
   }
+
+  validatePostInformation(postInformation) {
+    postInformation = {
+      title: undefined,
+      content: undefined,
+      ...postInformation,
+    };
+    for (const key in postInformation) {
+      if (Object.hasOwnProperty.call(postInformation, key)) {
+        const element = postInformation[key];
+        if (element === undefined)
+          return { valid: false, message: `"${key}" is required` };
+        if (!element.length)
+          return {
+            valid: false,
+            message: `"${key}" is not allowed to be empty`,
+          };
+      }
+    }
+    return { valid: true };
+  }
 }
 
 module.exports = new Utils();

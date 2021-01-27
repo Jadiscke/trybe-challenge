@@ -17,6 +17,40 @@ class PostController {
       return res.status(400).json({ error });
     }
   }
+
+  async create(req, res) {
+    const { id } = req.user;
+    const { title, content } = req.body;
+    try {
+      const { valid, message } = Utils.validatePostInformation({
+        title,
+        content,
+      });
+
+      if (!valid) {
+        return res.status(400).json({ message });
+      }
+      const now = new Date(Date.now()).toISOString();
+      const createdPost = await PostModel.create({
+        title,
+        content,
+        userId: id,
+        published: now,
+        updated: now,
+      });
+
+      return res.status(201).json({
+        title,
+        content,
+        userId: id,
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(400).json({
+        error,
+      });
+    }
+  }
 }
 
 module.exports = new PostController();

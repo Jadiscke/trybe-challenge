@@ -11,4 +11,10 @@ postRoutes.get(
   postController.getPosts
 );
 
+postRoutes.post(
+  PATH,
+  AuthenticationMiddleware.authenticateToken,
+  postController.create
+);
+
 module.exports = postRoutes;

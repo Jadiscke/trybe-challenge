@@ -17,7 +17,7 @@ describe("POST", async () => {
     await seedPost(id);
   });
 
-  describe.only("GET /post", async () => {
+  describe("GET /post", async () => {
     it("should return a list of posts", async () => {
       const foundPosts = await Post.findAll({ include: User });
       const foundPostsValues = foundPosts.map((post) => {
@@ -38,6 +38,32 @@ describe("POST", async () => {
         response.body.map((post) => ({ id: post.id, title: post.title })),
         expected.map((post) => ({ id: post.id, title: post.title }))
       );
+    });
+  });
+  describe.only("POST /post", async () => {
+    it("should create a new post", async () => {
+      const newPost = {
+        title: "Latest updates, August 1st",
+        content: "The whole text for the blog post goes here in this key",
+      };
+      const foundUser = await User.findOne({
+        where: { email: SEEDED_USER.email },
+      });
+
+      const expected = {
+        ...newPost,
+        userId: foundUser.id,
+      };
+
+      const token = generateToken(foundUser.id);
+
+      const response = await request(app)
+        .post("/post")
+        .set("Authorization", `Bearer ${token}`)
+        .send(newPost);
+
+      assert.deepStrictEqual(response.status, 201);
+      assert.deepStrictEqual(response.body, expected);
     });
   });
 });
