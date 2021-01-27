@@ -43,14 +43,27 @@ class Utils {
   }
 
   formatUser(user) {
-    const safeUser = {
-      id: user.id,
-      user: user.user,
-      email: user.email,
-      displayName: user.displayName,
-      image: user.image,
+    const { password, ...formatedUser } = {
+      ...user,
     };
-    return safeUser;
+    return formatedUser;
+  }
+
+  formatPostList(posts) {
+    const formatedPosts = posts.map(this.formatPost);
+
+    return formatedPosts;
+  }
+
+  formatPost(post) {
+    const user = post.user;
+    const formatedUser = Utils.prototype.formatUser(user);
+    const { userId, ...formatedPost } = {
+      ...post,
+      user: formatedUser,
+    };
+
+    return formatedPost;
   }
 
   validateLoginInformation(loginInformation) {
