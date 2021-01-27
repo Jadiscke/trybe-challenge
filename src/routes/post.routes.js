@@ -12,6 +12,12 @@ postRoutes.get(
 );
 
 postRoutes.get(
+  PATH + "/search",
+  AuthenticationMiddleware.authenticateToken,
+  postController.search
+);
+
+postRoutes.get(
   PATH + "/:id",
   AuthenticationMiddleware.authenticateToken,
   postController.getById

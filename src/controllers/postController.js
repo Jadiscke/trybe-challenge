@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const PostModel = require("../models/Post");
 const UserModel = require("../models/User");
 const Utils = require("../Utils");
@@ -144,6 +145,38 @@ class PostController {
       return res.status(204).send();
     } catch (error) {
       return res.status(400).json(error);
+    }
+  }
+  async search(req, res) {
+    const { q: searchTerm } = req.query;
+    try {
+      const foundPosts = await PostModel.findAll({
+        include: UserModel,
+        where: {
+          [Op.or]: [
+            {
+              title: {
+                [Op.substring]: searchTerm,
+              },
+            },
+            {
+              content: {
+                [Op.substring]: searchTerm,
+              },
+            },
+          ],
+        },
+      });
+      const foundPostsValues = foundPosts.map((post) => {
+        return { ...post.dataValues, user: post.user.dataValues };
+      });
+
+      const formattedPosts = Utils.formatPostList(foundPostsValues);
+
+      return res.status(200).json(formattedPosts);
+    } catch (error) {
+      console.log(error);
+      return res.status(400).json({ error });
     }
   }
 }

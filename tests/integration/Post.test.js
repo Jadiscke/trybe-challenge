@@ -10,6 +10,7 @@ const { generateToken } = require("../../src/Authentication");
 const Post = require("../../src/models/Post");
 const User = require("../../src/models/User");
 const Utils = require("../../src/Utils");
+const { Op } = require("sequelize");
 
 describe("POST", async () => {
   before(async () => {
@@ -75,6 +76,62 @@ describe("POST", async () => {
       console.log(response.body);
       assert.deepStrictEqual(response.status, 200);
       assert.deepStrictEqual(response.body, expected);
+    });
+  });
+
+  describe("GET /post/search?q=:searchTerm", async () => {
+    it("should return an array of posts based on the searchTerm", async () => {
+      const newPost = {
+        title: "Vem que vem",
+        content: "A trybe é a melhor escola de programação do planeta!",
+      };
+      const searchTerm = "escola";
+      const now = new Date(Date.now()).toISOString();
+      const user = await User.findOne({
+        where: { email: SEEDED_USER.email },
+      });
+      const post = await Post.create({
+        ...newPost,
+        userId: user.id,
+        published: now,
+        updated: now,
+      });
+      const foundPosts = await Post.findAll({
+        include: User,
+        where: {
+          [Op.or]: [
+            {
+              title: {
+                [Op.substring]: searchTerm,
+              },
+            },
+            {
+              content: {
+                [Op.substring]: searchTerm,
+              },
+            },
+          ],
+        },
+      });
+      const foundPostsValues = foundPosts.map((post) => {
+        return { ...post.dataValues, user: post.user.dataValues };
+      });
+
+      const expected = Utils.formatPostList(foundPostsValues);
+      const { id } = await User.findOne({
+        where: { email: SEEDED_USER.email },
+      });
+      const token = generateToken(id);
+      const response = await request(app)
+        .get("/post/search")
+        .query(`q=${searchTerm}`)
+        .set("Authorization", `Bearer ${token}`);
+
+      assert.deepStrictEqual(response.status, 200);
+      assert.deepStrictEqual(
+        response.body.map((post) => ({ id: post.id, title: post.title })),
+        expected.map((post) => ({ id: post.id, title: post.title }))
+      );
     });
   });
 
