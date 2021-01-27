@@ -77,6 +77,89 @@ describe("POST", async () => {
       assert.deepStrictEqual(response.body, expected);
     });
   });
+
+  describe("PUT /post/:id", async () => {
+    it("should update post by id", async () => {
+      const newPost = {
+        title: "new post",
+        content: "this is a new post",
+      };
+      const now = new Date(Date.now()).toISOString();
+      const user = await User.findOne({
+        where: { email: SEEDED_USER.email },
+      });
+      const { id: userId } = user;
+      const { id: postId } = await Post.create({
+        ...newPost,
+        userId,
+        published: now,
+        updated: now,
+      });
+
+      const updatedPost = {
+        ...newPost,
+        content: "this is a updated content",
+      };
+
+      console.log();
+
+      const token = generateToken(userId);
+      const expected = {
+        ...updatedPost,
+        userId,
+      };
+
+      const response = await request(app)
+        .put(`/post/${postId}`)
+        .set("Authorization", `Bearer ${token}`)
+        .send(updatedPost);
+
+      console.log("BODY: ", response.body);
+      assert.deepStrictEqual(response.status, 200);
+      assert.deepStrictEqual(response.body, expected);
+    });
+
+    it("should refuse to update because the user is not authorized", async () => {
+      const newPost = {
+        title: "new post",
+        content: "this is a new post",
+      };
+      const now = new Date(Date.now()).toISOString();
+      const user = await User.findOne({
+        where: { email: SEEDED_USER.email },
+      });
+      const anotherUser = await User.create({
+        ...SEEDED_USER,
+        email: "notauthorized@email.com",
+      });
+      const { id: userId } = user;
+      const { id: postId } = await Post.create({
+        ...newPost,
+        userId,
+        published: now,
+        updated: now,
+      });
+
+      const updatedPost = {
+        ...newPost,
+        content: "this is a updated content",
+      };
+
+      const token = generateToken(anotherUser.id);
+      const expected = {
+        message: "Usuário não autorizado",
+      };
+
+      const response = await request(app)
+        .put(`/post/${postId}`)
+        .set("Authorization", `Bearer ${token}`)
+        .send(updatedPost);
+
+      console.log("BODY: ", response.body);
+      assert.deepStrictEqual(response.status, 401);
+      assert.deepStrictEqual(response.body, expected);
+    });
+  });
   describe("POST /post", async () => {
     it("should create a new post", async () => {
       const newPost = {

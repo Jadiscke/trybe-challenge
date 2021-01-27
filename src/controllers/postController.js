@@ -81,6 +81,46 @@ class PostController {
       });
     }
   }
+
+  async updatePostById(req, res) {
+    const { id } = req.params;
+    const { id: userId } = req.user;
+    const { title, content } = req.body;
+
+    try {
+      const { valid, message } = Utils.validatePostInformation({
+        title,
+        content,
+      });
+      if (!valid) {
+        return res.status(400).json(message);
+      }
+      const post = await PostModel.findOne({ where: { id } });
+      if (!post) {
+        return res.status(404).send();
+      }
+
+      if (post.userId !== userId) {
+        return res.status(401).json({
+          message: "Usuário não autorizado",
+        });
+      }
+      const now = new Date(Date.now()).toISOString();
+
+      post.setDataValue("title", title);
+      post.setDataValue("content", content);
+      post.setDataValue("updated", now);
+      await post.save();
+
+      return res.status(200).json({
+        title,
+        content,
+        userId,
+      });
+    } catch (error) {
+      return res.status(400).json(error);
+    }
+  }
 }
 
 module.exports = new PostController();
