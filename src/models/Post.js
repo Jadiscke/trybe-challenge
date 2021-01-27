@@ -17,7 +17,7 @@ class Post extends Model {
     );
     this.addHook("beforeSave", (post) => {
       post.id = v4();
-      return post;
+      return post.id;
     });
 
     return this;

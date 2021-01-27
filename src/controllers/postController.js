@@ -18,6 +18,36 @@ class PostController {
     }
   }
 
+  async getPostById(req, res) {
+    const { id } = req.params;
+
+    console.log("POST ID:  ", id);
+
+    try {
+      const foundPost = await PostModel.findOne({
+        include: [{ all: true }],
+        where: {
+          id,
+        },
+      });
+      console.log("FOUND POST:   ", foundPost);
+      if (!foundPost) {
+        return res.status(404).json({
+          message: "Post não existe",
+        });
+      }
+      const foundPostValues = {
+        ...foundPost.dataValues,
+        user: foundPost.user.dataValues,
+      };
+      const formatedPost = Utils.formatPost(foundPostValues);
+
+      return res.status(200).json(formatedPost);
+    } catch (error) {
+      return res.status(400).json(error);
+    }
+  }
+
   async create(req, res) {
     const { id } = req.user;
     const { title, content } = req.body;

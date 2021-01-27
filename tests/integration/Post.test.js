@@ -40,7 +40,44 @@ describe("POST", async () => {
       );
     });
   });
-  describe.only("POST /post", async () => {
+  describe("GET /post/:id", async () => {
+    it("should return a post by the id", async () => {
+      const newPost = {
+        title: "new post",
+        content: "this is a new post",
+      };
+      const now = new Date(Date.now()).toISOString();
+      const user = await User.findOne({
+        where: { email: SEEDED_USER.email },
+      });
+      const { id: userId } = user;
+      const { id: postId } = await Post.create({
+        ...newPost,
+        userId,
+        published: now,
+        updated: now,
+      });
+
+      console.log();
+
+      const token = generateToken(userId);
+      const expected = {
+        id: postId,
+        ...newPost,
+        user: Utils.formatUser(user.dataValues),
+        published: now,
+        updated: now,
+      };
+
+      const response = await request(app)
+        .get(`/post/${postId}`)
+        .set("Authorization", `Bearer ${token}`);
+      console.log(response.body);
+      assert.deepStrictEqual(response.status, 200);
+      assert.deepStrictEqual(response.body, expected);
+    });
+  });
+  describe("POST /post", async () => {
     it("should create a new post", async () => {
       const newPost = {
         title: "Latest updates, August 1st",

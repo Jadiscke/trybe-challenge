@@ -11,6 +11,12 @@ postRoutes.get(
   postController.getPosts
 );
 
+postRoutes.get(
+  PATH + "/:id",
+  AuthenticationMiddleware.authenticateToken,
+  postController.getPostById
+);
+
 postRoutes.post(
   PATH,
   AuthenticationMiddleware.authenticateToken,
