@@ -5,7 +5,6 @@ const Utils = require("../Utils");
 class PostController {
   async getPosts(req, res) {
     try {
-      console.log("ENTREI AQUI!!!!!");
       const foundPosts = await PostModel.findAll({ include: UserModel });
       const foundPostsValues = foundPosts.map((post) => {
         return { ...post.dataValues, user: post.user.dataValues };
