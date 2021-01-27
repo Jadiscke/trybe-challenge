@@ -161,6 +161,79 @@ describe(" User ", async () => {
       assert.deepStrictEqual(response.body, expected);
     });
   });
+  describe("DELETE /user/me", async () => {
+    it("should delete my user based on token information", async () => {
+      const expectedStatus = 204;
+
+      const { id } = await User.create({
+        ...SEEDED_USER,
+      });
+
+      const token = generateToken(id);
+
+      const response = await request(app)
+        .delete("/user/me")
+        .set("Authorization", `Bearer ${token}`);
+
+      const foundUser = await User.findOne({
+        where: { id: id },
+      });
+
+      assert.deepStrictEqual(response.status, expectedStatus);
+      assert.isNull(foundUser);
+    });
+    it("should fail to delete my user if token information is invalid", async () => {
+      const expectedStatus = 401;
+      const expected = {
+        message: "Token expirado ou inválido",
+      };
+
+      const { id } = await User.create({
+        ...SEEDED_USER,
+      });
+
+      const token = generateToken(id);
+      const foundUser = await User.findOne({
+        where: { id: id },
+      });
+      foundUser.destroy();
+      const response = await request(app)
+        .delete("/user/me")
+        .set("Authorization", `Bearer ${token}`);
+      console.log(response.body);
+
+      assert.deepStrictEqual(response.status, expectedStatus);
+      assert.deepStrictEqual(response.body, expected);
+    });
+    it("should fail to delete my user if token information is expired", async () => {
+      const expectedStatus = 401;
+      const expected = {
+        message: "Token expirado ou inválido",
+      };
+
+      const { id } = await User.create({
+        ...SEEDED_USER,
+      });
+
+      const token = generateToken(id);
+
+      clock.tick(BIG_TIME);
+
+      const response = await request(app)
+        .delete("/user/me")
+        .set("Authorization", `Bearer ${token}`);
+      console.log(response.body);
+
+      const foundUser = await User.findOne({
+        where: { id: id },
+      });
+      assert.deepStrictEqual(response.status, expectedStatus);
+      assert.deepStrictEqual(response.body, expected);
+      assert.isNotNull(foundUser);
+
+      foundUser.destroy();
+    });
+  });
   describe("POST /login", async () => {
     it("should return a token when trying to Login", async () => {
       const seededUser = SEEDED_USER;

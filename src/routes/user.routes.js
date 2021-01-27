@@ -5,6 +5,11 @@ const authenticationMiddleware = require("../middlewares/authentication");
 const PATH = "/user";
 const userRoutes = Router();
 
+userRoutes.delete(
+  PATH + "/me",
+  authenticationMiddleware.authenticateToken,
+  userController.delete
+);
 userRoutes.get(
   PATH,
   authenticationMiddleware.authenticateToken,

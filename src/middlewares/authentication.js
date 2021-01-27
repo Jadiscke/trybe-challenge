@@ -15,15 +15,19 @@ class AuthenticationMiddleware {
         return res.status(401).json({ message: "Token não encontrado" });
       }
       const decipheredInfo = decipherToken(token);
+
       if (!decipheredInfo)
         return res.status(401).json({ message: "Token não encontrado" });
 
       const { id } = decipheredInfo;
       const foundUser = await UserModel.findOne({ where: { id } });
-      if (!foundUser) {
-        return res.status(401).json({ message: "Token não encontrado" });
-      }
 
+      if (!foundUser) {
+        return res.status(401).json({ message: "Token expirado ou inválido" });
+      }
+      req.user = {
+        id,
+      };
       next();
     } catch (error) {
       if (error.name === "TokenExpiredError") {

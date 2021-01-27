@@ -62,6 +62,24 @@ class UserController {
     }
   }
 
+  async delete(req, res) {
+    const { id } = req.user;
+
+    try {
+      const response = await UserModel.destroy({
+        where: {
+          id: id,
+        },
+      });
+
+      console.log("response");
+
+      return res.status(204).send();
+    } catch (error) {
+      return res.status(400).json({ error });
+    }
+  }
+
   async getUsers(req, res) {
     try {
       const users = await UserModel.findAll();
