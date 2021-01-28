@@ -34,4 +34,4 @@ The API runs on **http://localhost:8000** .
 - [ ] README (Incomplete)
 - [ ] Unit Tests (Incomplete)
 - [ ] Integration Tests (Incomplete)
-- [ ] API
+- [x] API
