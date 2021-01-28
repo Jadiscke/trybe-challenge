@@ -81,7 +81,8 @@ class UserController {
   async getUsers(req, res) {
     try {
       const users = await UserModel.findAll();
-      const usersToSend = Utils.formatUserList(users);
+      const usersValues = users.map((users) => users.dataValues);
+      const usersToSend = Utils.formatUserList(usersValues);
       return res.json(usersToSend);
     } catch (error) {
       return res.status(400).json(error);
